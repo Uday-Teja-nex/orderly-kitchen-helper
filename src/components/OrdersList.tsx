@@ -70,6 +70,9 @@ export function OrdersList() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <div className="flex items-center space-x-2">
+                  <Badge variant="outline" className="bg-secondary">
+                    #{order.id}
+                  </Badge>
                   <p className="font-semibold">{order.customerName}</p>
                   <Badge
                     className={`status-badge status-badge-${order.status}`}

@@ -55,7 +55,12 @@ export function KitchenView() {
           <Card key={order.id} className="order-card animate-fadeIn">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="font-semibold">{order.customerName}</p>
+                <div className="flex items-center space-x-2">
+                  <Badge variant="outline" className="bg-secondary">
+                    #{order.id}
+                  </Badge>
+                  <p className="font-semibold">{order.customerName}</p>
+                </div>
                 <div className="flex items-center text-sm text-muted-foreground">
                   <Timer className="mr-1 h-4 w-4" />
                   {new Date(order.timestamp).toLocaleTimeString()}
