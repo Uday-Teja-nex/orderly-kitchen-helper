@@ -11,7 +11,7 @@ import { KitchenView } from "@/components/KitchenView";
 import { OrdersList } from "@/components/OrdersList";
 import { NewOrderForm } from "@/components/NewOrderForm";
 import { Button } from "@/components/ui/button";
-import { Kitchen, ClipboardList, PlusCircle } from "lucide-react";
+import { Utensils, ClipboardList, PlusCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Index() {
@@ -39,7 +39,7 @@ export default function Index() {
                 className="w-full justify-start"
                 onClick={() => setView("kitchen")}
               >
-                <Kitchen className="mr-2 h-4 w-4" />
+                <Utensils className="mr-2 h-4 w-4" />
                 Kitchen
               </Button>
               <Button
