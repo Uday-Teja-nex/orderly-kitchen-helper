@@ -3,7 +3,16 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, Timer } from "lucide-react";
+import { Check, Timer, Pencil } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/hooks/use-toast";
 
 type Order = {
   id: string;
@@ -37,12 +46,50 @@ export function KitchenView() {
     },
   ]);
 
+  const [editingOrder, setEditingOrder] = useState<Order | null>(null);
+
   const updateOrderStatus = (orderId: string, newStatus: Order["status"]) => {
     setOrders((prevOrders) =>
       prevOrders.map((order) =>
         order.id === orderId ? { ...order, status: newStatus } : order
       )
     );
+  };
+
+  const handleQuantityChange = (itemIndex: number, newQuantity: string) => {
+    if (!editingOrder) return;
+    
+    const quantity = parseInt(newQuantity) || 0;
+    if (quantity < 0) return;
+
+    const updatedItems = editingOrder.items.map((item, index) => {
+      if (index === itemIndex) {
+        return { ...item, quantity };
+      }
+      return item;
+    });
+
+    setEditingOrder({
+      ...editingOrder,
+      items: updatedItems,
+    });
+  };
+
+  const saveChanges = () => {
+    if (!editingOrder) return;
+    
+    setOrders((prevOrders) =>
+      prevOrders.map((order) =>
+        order.id === editingOrder.id ? editingOrder : order
+      )
+    );
+    
+    toast({
+      title: "Order updated",
+      description: `Order #${editingOrder.id} has been updated successfully.`,
+    });
+    
+    setEditingOrder(null);
   };
 
   return (
@@ -52,7 +99,7 @@ export function KitchenView() {
       </div>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {orders.map((order) => (
-          <Card key={order.id} className="order-card animate-fadeIn">
+          <Card key={order.id} className="order-card animate-fadeIn p-6">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <div className="flex items-center space-x-2">
@@ -85,6 +132,47 @@ export function KitchenView() {
               ))}
             </ul>
             <div className="flex justify-end space-x-2">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setEditingOrder(order)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                    Edit
+                  </Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle>Edit Order #{order.id}</SheetTitle>
+                  </SheetHeader>
+                  {editingOrder && editingOrder.id === order.id && (
+                    <div className="mt-6 space-y-4">
+                      {editingOrder.items.map((item, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between space-x-4"
+                        >
+                          <span className="flex-grow">{item.name}</span>
+                          <Input
+                            type="number"
+                            value={item.quantity}
+                            onChange={(e) =>
+                              handleQuantityChange(index, e.target.value)
+                            }
+                            className="w-20"
+                            min="0"
+                          />
+                        </div>
+                      ))}
+                      <Button className="w-full mt-4" onClick={saveChanges}>
+                        Save Changes
+                      </Button>
+                    </div>
+                  )}
+                </SheetContent>
+              </Sheet>
               {order.status === "pending" && (
                 <Button
                   size="sm"
