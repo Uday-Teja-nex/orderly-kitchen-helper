@@ -8,7 +8,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { KitchenView } from "@/components/KitchenView";
-import { OrdersList } from "@/components/OrdersList";
+import { OrdersList } from "@/components/orders/OrdersList";
 import { NewOrderForm } from "@/components/NewOrderForm";
 import { Button } from "@/components/ui/button";
 import { Utensils, ClipboardList, PlusCircle } from "lucide-react";
