@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { useOrderStore } from "@/utils/orderStore";
 
 type MenuItem = {
   id: string;
@@ -29,6 +30,7 @@ export function NewOrderForm() {
   const [customerName, setCustomerName] = useState("");
   const [selectedItems, setSelectedItems] = useState<OrderItem[]>([]);
   const { toast } = useToast();
+  const addOrder = useOrderStore((state) => state.addOrder);
 
   const addItem = (item: MenuItem) => {
     setSelectedItems((prev) => {
@@ -64,14 +66,29 @@ export function NewOrderForm() {
       });
       return;
     }
+
+    const total = selectedItems.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+
+    const orderItems = selectedItems.map(({ name, quantity, price }) => ({
+      name,
+      quantity,
+      price,
+    }));
+
+    addOrder({
+      customerName,
+      items: orderItems,
+      total,
+    });
     
-    // Here you would typically send the order to your backend
     toast({
       title: "Order Created",
       description: "The order has been successfully created",
     });
     
-    // Reset form
     setCustomerName("");
     setSelectedItems([]);
   };

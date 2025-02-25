@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -19,42 +18,10 @@ import {
 } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
-
-type Order = {
-  id: string;
-  customerName: string;
-  items: { name: string; quantity: number; price: number }[];
-  status: "pending" | "progress" | "completed" | "cancelled";
-  timestamp: string;
-  total: number;
-};
+import { useOrderStore, Order } from "@/utils/orderStore";
 
 export function OrdersList() {
-  const [orders, setOrders] = useState<Order[]>([
-    {
-      id: "1",
-      customerName: "John Doe",
-      items: [
-        { name: "Burger", quantity: 2, price: 10 },
-        { name: "Fries", quantity: 1, price: 5 },
-      ],
-      status: "pending",
-      timestamp: "2024-03-19T10:00:00",
-      total: 25,
-    },
-    {
-      id: "2",
-      customerName: "Jane Smith",
-      items: [
-        { name: "Pizza", quantity: 1, price: 15 },
-        { name: "Salad", quantity: 1, price: 8 },
-      ],
-      status: "progress",
-      timestamp: "2024-03-19T10:15:00",
-      total: 23,
-    },
-  ]);
-
+  const { orders, updateOrder } = useOrderStore();
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
 
   const activeOrders = orders.filter(
@@ -63,11 +30,7 @@ export function OrdersList() {
   const completedOrders = orders.filter((order) => order.status === "completed");
 
   const updateOrderStatus = (orderId: string, newStatus: Order["status"]) => {
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.id === orderId ? { ...order, status: newStatus } : order
-      )
-    );
+    updateOrder(orderId, { status: newStatus });
   };
 
   const handleQuantityChange = (itemIndex: number, newQuantity: string) => {
@@ -98,11 +61,7 @@ export function OrdersList() {
   const saveChanges = () => {
     if (!editingOrder) return;
     
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.id === editingOrder.id ? editingOrder : order
-      )
-    );
+    updateOrder(editingOrder.id, editingOrder);
     
     toast({
       title: "Order updated",

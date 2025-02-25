@@ -1,5 +1,3 @@
-
-import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,6 +11,8 @@ import {
 } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
+import { useOrderStore } from "@/utils/orderStore";
+import { useState } from "react";
 
 type Order = {
   id: string;
@@ -23,43 +23,13 @@ type Order = {
 };
 
 export function KitchenView() {
-  const [orders, setOrders] = useState<Order[]>([
-    {
-      id: "1",
-      customerName: "John Doe",
-      items: [
-        { name: "Burger", quantity: 2 },
-        { name: "Fries", quantity: 1 },
-      ],
-      status: "pending",
-      timestamp: "2024-03-19T10:00:00",
-    },
-    {
-      id: "2",
-      customerName: "Jane Smith",
-      items: [
-        { name: "Pizza", quantity: 1 },
-        { name: "Salad", quantity: 1 },
-      ],
-      status: "progress",
-      timestamp: "2024-03-19T10:15:00",
-    },
-  ]);
-
+  const { orders, updateOrder } = useOrderStore();
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
 
   const activeOrders = orders.filter(
     (order) => order.status === "pending" || order.status === "progress"
   );
   const completedOrders = orders.filter((order) => order.status === "completed");
-
-  const updateOrderStatus = (orderId: string, newStatus: Order["status"]) => {
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.id === orderId ? { ...order, status: newStatus } : order
-      )
-    );
-  };
 
   const handleQuantityChange = (itemIndex: number, newQuantity: string) => {
     if (!editingOrder) return;
@@ -83,11 +53,7 @@ export function KitchenView() {
   const saveChanges = () => {
     if (!editingOrder) return;
     
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.id === editingOrder.id ? editingOrder : order
-      )
-    );
+    updateOrder(editingOrder.id, editingOrder);
     
     toast({
       title: "Order updated",
@@ -175,7 +141,7 @@ export function KitchenView() {
         {order.status === "pending" && (
           <Button
             size="sm"
-            onClick={() => updateOrderStatus(order.id, "progress")}
+            onClick={() => updateOrder(order.id, "progress")}
           >
             Start Preparing
           </Button>
@@ -183,7 +149,7 @@ export function KitchenView() {
         {order.status === "progress" && (
           <Button
             size="sm"
-            onClick={() => updateOrderStatus(order.id, "completed")}
+            onClick={() => updateOrder(order.id, "completed")}
           >
             <Check className="mr-1 h-4 w-4" />
             Mark Complete
