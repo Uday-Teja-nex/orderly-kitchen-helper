@@ -1,12 +1,7 @@
-import { useState } from "react";
+
+import { Order } from "@/utils/orderStore";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { MoreVertical, Timer, Pencil } from "lucide-react";
 import {
@@ -16,22 +11,23 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
-import { useOrderStore, Order } from "@/utils/orderStore";
+import { useState } from "react";
 
-export function OrdersList() {
-  const { orders, updateOrder } = useOrderStore();
+interface OrderCardProps {
+  order: Order;
+  onUpdateOrder: (orderId: string, updates: Partial<Order>) => void;
+}
+
+export function OrderCard({ order, onUpdateOrder }: OrderCardProps) {
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
-
-  const activeOrders = orders.filter(
-    (order) => order.status === "pending" || order.status === "progress"
-  );
-  const completedOrders = orders.filter((order) => order.status === "completed");
-
-  const updateOrderStatus = (orderId: string, newStatus: Order["status"]) => {
-    updateOrder(orderId, { status: newStatus });
-  };
 
   const handleQuantityChange = (itemIndex: number, newQuantity: string) => {
     if (!editingOrder) return;
@@ -61,7 +57,7 @@ export function OrdersList() {
   const saveChanges = () => {
     if (!editingOrder) return;
     
-    updateOrder(editingOrder.id, editingOrder);
+    onUpdateOrder(editingOrder.id, editingOrder);
     
     toast({
       title: "Order updated",
@@ -71,7 +67,11 @@ export function OrdersList() {
     setEditingOrder(null);
   };
 
-  const OrderCard = ({ order }: { order: Order }) => (
+  const updateOrderStatus = (newStatus: Order["status"]) => {
+    onUpdateOrder(order.id, { status: newStatus });
+  };
+
+  return (
     <Card key={order.id} className="order-card animate-fadeIn p-6">
       <div className="flex items-center justify-between mb-4">
         <div>
@@ -152,18 +152,14 @@ export function OrdersList() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem
-                onClick={() => updateOrderStatus(order.id, "progress")}
-              >
+              <DropdownMenuItem onClick={() => updateOrderStatus("progress")}>
                 Start Preparing
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => updateOrderStatus(order.id, "completed")}
-              >
+              <DropdownMenuItem onClick={() => updateOrderStatus("completed")}>
                 Mark Complete
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => updateOrderStatus(order.id, "cancelled")}
+                onClick={() => updateOrderStatus("cancelled")}
                 className="text-red-600"
               >
                 Cancel Order
@@ -192,34 +188,5 @@ export function OrdersList() {
         </div>
       </div>
     </Card>
-  );
-
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold tracking-tight">Orders</h2>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" size="sm">
-            Filter
-          </Button>
-        </div>
-      </div>
-      {activeOrders.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Active Orders</h3>
-          {activeOrders.map((order) => (
-            <OrderCard key={order.id} order={order} />
-          ))}
-        </div>
-      )}
-      {completedOrders.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Completed Orders</h3>
-          {completedOrders.map((order) => (
-            <OrderCard key={order.id} order={order} />
-          ))}
-        </div>
-      )}
-    </div>
   );
 }

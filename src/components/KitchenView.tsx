@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,16 +12,8 @@ import {
 } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
-import { useOrderStore } from "@/utils/orderStore";
+import { useOrderStore, Order } from "@/utils/orderStore";
 import { useState } from "react";
-
-type Order = {
-  id: string;
-  customerName: string;
-  items: { name: string; quantity: number }[];
-  status: "pending" | "progress" | "completed" | "cancelled";
-  timestamp: string;
-};
 
 export function KitchenView() {
   const { orders, updateOrder } = useOrderStore();
@@ -44,9 +37,15 @@ export function KitchenView() {
       return item;
     });
 
+    const newTotal = updatedItems.reduce(
+      (sum, item) => sum + item.quantity * item.price,
+      0
+    );
+
     setEditingOrder({
       ...editingOrder,
       items: updatedItems,
+      total: newTotal,
     });
   };
 
@@ -141,7 +140,7 @@ export function KitchenView() {
         {order.status === "pending" && (
           <Button
             size="sm"
-            onClick={() => updateOrder(order.id, "progress")}
+            onClick={() => updateOrder(order.id, { status: "progress" })}
           >
             Start Preparing
           </Button>
@@ -149,7 +148,7 @@ export function KitchenView() {
         {order.status === "progress" && (
           <Button
             size="sm"
-            onClick={() => updateOrder(order.id, "completed")}
+            onClick={() => updateOrder(order.id, { status: "completed" })}
           >
             <Check className="mr-1 h-4 w-4" />
             Mark Complete
