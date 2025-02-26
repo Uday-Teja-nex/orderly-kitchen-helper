@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -87,6 +88,47 @@ export function KitchenView() {
           {order.status}
         </Badge>
       </div>
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-2 right-2 h-8 w-8"
+            onClick={() => setEditingOrder(order)}
+          >
+            <Pencil className="h-4 w-4" />
+          </Button>
+        </SheetTrigger>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Edit Order #{order.id}</SheetTitle>
+          </SheetHeader>
+          {editingOrder && editingOrder.id === order.id && (
+            <div className="mt-6 space-y-4">
+              {editingOrder.items.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between space-x-4"
+                >
+                  <span className="flex-grow">{item.name}</span>
+                  <Input
+                    type="number"
+                    value={item.quantity}
+                    onChange={(e) =>
+                      handleQuantityChange(index, e.target.value)
+                    }
+                    className="w-20"
+                    min="0"
+                  />
+                </div>
+              ))}
+              <Button className="w-full mt-4" onClick={saveChanges}>
+                Save Changes
+              </Button>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
       <ul className="space-y-2 mb-4">
         {order.items.map((item, index) => (
           <li
@@ -99,47 +141,6 @@ export function KitchenView() {
         ))}
       </ul>
       <div className="flex justify-end space-x-2">
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setEditingOrder(order)}
-            >
-              <Pencil className="h-4 w-4" />
-              Edit
-            </Button>
-          </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>Edit Order #{order.id}</SheetTitle>
-            </SheetHeader>
-            {editingOrder && editingOrder.id === order.id && (
-              <div className="mt-6 space-y-4">
-                {editingOrder.items.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between space-x-4"
-                  >
-                    <span className="flex-grow">{item.name}</span>
-                    <Input
-                      type="number"
-                      value={item.quantity}
-                      onChange={(e) =>
-                        handleQuantityChange(index, e.target.value)
-                      }
-                      className="w-20"
-                      min="0"
-                    />
-                  </div>
-                ))}
-                <Button className="w-full mt-4" onClick={saveChanges}>
-                  Save Changes
-                </Button>
-              </div>
-            )}
-          </SheetContent>
-        </Sheet>
         {order.status === "pending" && (
           <Button
             size="sm"
@@ -189,3 +190,4 @@ export function KitchenView() {
     </div>
   );
 }
+
