@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -63,7 +62,11 @@ export function KitchenView() {
   };
 
   const OrderCard = ({ order }: { order: Order }) => (
-    <Card key={order.id} className="order-card animate-fadeIn p-6">
+    <Card 
+      key={order.id} 
+      className="order-card animate-fadeIn p-6"
+      data-status={order.status}
+    >
       <div className="flex items-center justify-between mb-4">
         <div>
           <div className="flex items-center space-x-2">

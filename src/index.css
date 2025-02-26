@@ -62,7 +62,23 @@
 
 @layer components {
   .order-card {
-    @apply relative overflow-hidden rounded-lg border p-4 transition-all hover:shadow-md bg-gradient-to-br from-white to-secondary/30 backdrop-blur-sm;
+    @apply relative overflow-hidden rounded-lg border p-4 transition-all hover:shadow-md backdrop-blur-sm;
+  }
+
+  .order-card[data-status="pending"] {
+    @apply bg-gradient-to-br from-orange-50 to-orange-100/30 border-orange-200;
+  }
+
+  .order-card[data-status="progress"] {
+    @apply bg-gradient-to-br from-sky-50 to-sky-100/30 border-sky-200;
+  }
+
+  .order-card[data-status="completed"] {
+    @apply bg-gradient-to-br from-purple-50 to-purple-100/30 border-purple-200;
+  }
+
+  .order-card[data-status="cancelled"] {
+    @apply bg-gradient-to-br from-rose-50 to-rose-100/30 border-rose-200;
   }
   
   .status-badge {

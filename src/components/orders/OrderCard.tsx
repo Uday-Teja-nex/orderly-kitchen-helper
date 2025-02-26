@@ -1,4 +1,3 @@
-
 import { Order } from "@/utils/orderStore";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -72,7 +71,11 @@ export function OrderCard({ order, onUpdateOrder }: OrderCardProps) {
   };
 
   return (
-    <Card key={order.id} className="order-card animate-fadeIn p-6">
+    <Card 
+      key={order.id} 
+      className="order-card animate-fadeIn p-6" 
+      data-status={order.status}
+    >
       <div className="flex items-center justify-between mb-4">
         <div>
           <div className="flex items-center space-x-2">
