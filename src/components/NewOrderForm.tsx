@@ -7,32 +7,23 @@ import { Badge } from "@/components/ui/badge";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useOrderStore } from "@/utils/orderStore";
+import { useMenuStore } from "@/utils/menuStore";
 
-type MenuItem = {
+type OrderItem = {
   id: string;
   name: string;
   price: number;
-};
-
-type OrderItem = MenuItem & {
   quantity: number;
 };
-
-const MENU_ITEMS: MenuItem[] = [
-  { id: "1", name: "Burger", price: 10 },
-  { id: "2", name: "Fries", price: 5 },
-  { id: "3", name: "Pizza", price: 15 },
-  { id: "4", name: "Salad", price: 8 },
-  { id: "5", name: "Drink", price: 3 },
-];
 
 export function NewOrderForm() {
   const [customerName, setCustomerName] = useState("");
   const [selectedItems, setSelectedItems] = useState<OrderItem[]>([]);
   const { toast } = useToast();
   const addOrder = useOrderStore((state) => state.addOrder);
+  const menuItems = useMenuStore((state) => state.items);
 
-  const addItem = (item: MenuItem) => {
+  const addItem = (item: typeof menuItems[0]) => {
     setSelectedItems((prev) => {
       const existing = prev.find((i) => i.id === item.id);
       if (existing) {
@@ -119,12 +110,13 @@ export function NewOrderForm() {
                 onChange={(e) => setCustomerName(e.target.value)}
                 placeholder="Enter customer name"
                 className="max-w-md"
+                required
               />
             </div>
             <div>
               <h3 className="text-sm font-medium mb-3">Menu Items</h3>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {MENU_ITEMS.map((item) => (
+                {menuItems.map((item) => (
                   <button
                     key={item.id}
                     type="button"

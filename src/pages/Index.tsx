@@ -10,8 +10,9 @@ import {
 import { KitchenView } from "@/components/KitchenView";
 import { OrdersList } from "@/components/orders/OrdersList";
 import { NewOrderForm } from "@/components/NewOrderForm";
+import { MenuEditor } from "@/components/MenuEditor";
 import { Button } from "@/components/ui/button";
-import { Utensils, ClipboardList, PlusCircle } from "lucide-react";
+import { Utensils, ClipboardList, PlusCircle, Menu } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Index() {
@@ -50,6 +51,14 @@ export default function Index() {
                 <PlusCircle className="mr-2 h-4 w-4" />
                 New Order
               </Button>
+              <Button
+                variant={view === "menu" ? "secondary" : "ghost"}
+                className="w-full justify-start"
+                onClick={() => setView("menu")}
+              >
+                <Menu className="mr-2 h-4 w-4" />
+                Menu Editor
+              </Button>
             </div>
           </SidebarContent>
         </Sidebar>
@@ -66,6 +75,9 @@ export default function Index() {
               </TabsContent>
               <TabsContent value="new" className="mt-0">
                 <NewOrderForm />
+              </TabsContent>
+              <TabsContent value="menu" className="mt-0">
+                <MenuEditor />
               </TabsContent>
             </Tabs>
           </div>
