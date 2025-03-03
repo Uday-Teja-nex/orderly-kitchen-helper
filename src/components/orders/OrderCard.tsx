@@ -3,7 +3,7 @@ import { Order } from "@/utils/orderStore";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Timer } from "lucide-react";
+import { ChevronRight, Timer, IndianRupee } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -85,7 +85,10 @@ export function OrderCard({ order, onUpdateOrder }: OrderCardProps) {
             <span className="text-sm text-muted-foreground">
               {totalItems} items
             </span>
-            <span className="font-medium">${order.total}</span>
+            <span className="font-medium flex items-center">
+              <IndianRupee className="h-4 w-4 mr-1" />
+              {order.total}
+            </span>
           </div>
           <SheetTrigger asChild>
             <Button
@@ -129,8 +132,9 @@ export function OrderCard({ order, onUpdateOrder }: OrderCardProps) {
                             className="w-20"
                             min="0"
                           />
-                          <span className="w-20 text-right">
-                            ${item.price * item.quantity}
+                          <span className="w-20 text-right flex items-center justify-end">
+                            <IndianRupee className="h-3 w-3 mr-1" />
+                            {item.price * item.quantity}
                           </span>
                         </div>
                       </div>
@@ -149,8 +153,9 @@ export function OrderCard({ order, onUpdateOrder }: OrderCardProps) {
                         <span>
                           {item.name} x{item.quantity}
                         </span>
-                        <span className="font-medium">
-                          ${item.price * item.quantity}
+                        <span className="font-medium flex items-center">
+                          <IndianRupee className="h-3 w-3 mr-1" />
+                          {item.price * item.quantity}
                         </span>
                       </div>
                     ))}
@@ -160,7 +165,10 @@ export function OrderCard({ order, onUpdateOrder }: OrderCardProps) {
               <div className="border-t pt-4">
                 <div className="flex items-center justify-between font-medium">
                   <span>Total</span>
-                  <span>${order.total}</span>
+                  <span className="flex items-center">
+                    <IndianRupee className="h-4 w-4 mr-1" />
+                    {order.total}
+                  </span>
                 </div>
               </div>
             </div>
