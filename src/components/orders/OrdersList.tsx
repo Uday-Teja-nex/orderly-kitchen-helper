@@ -8,8 +8,9 @@ import { IndianRupee, ShoppingBag } from "lucide-react";
 export function OrdersList() {
   const { orders, updateOrder } = useOrderStore();
 
+  // Fix: replace "pending" with "progress" since "pending" is not a valid status
   const activeOrders = orders.filter(
-    (order) => order.status === "pending" || order.status === "progress"
+    (order) => order.status === "progress"
   );
   const completedOrders = orders.filter((order) => order.status === "completed");
 

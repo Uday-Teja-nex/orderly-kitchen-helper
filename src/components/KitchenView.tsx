@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
-import { useOrderStore, Order } from "@/utils/orderStore";
+import { useOrderStore, Order, OrderItem } from "@/utils/orderStore";
 import { useState } from "react";
 
 export function KitchenView() {
@@ -186,10 +186,12 @@ export function KitchenView() {
           <Button
             size="sm"
             onClick={() => {
-              const allItemsCompleted = order.items.map((item, index) => ({
+              // Fix type issue by properly specifying the status type
+              const allItemsCompleted = order.items.map(item => ({
                 ...item,
-                status: "completed"
+                status: "completed" as const
               }));
+              
               updateOrder(order.id, { 
                 status: "completed",
                 items: allItemsCompleted
