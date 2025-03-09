@@ -7,9 +7,7 @@ import { useOrderStore, Order } from "@/utils/orderStore";
 export function CustomerView() {
   const { orders } = useOrderStore();
 
-  const activeOrders = orders.filter(
-    (order) => order.status === "pending" || order.status === "progress"
-  );
+  const activeOrders = orders.filter((order) => order.status === "progress");
   const completedOrders = orders.filter((order) => order.status === "completed");
 
   const OrderCard = ({ order }: { order: Order }) => (
@@ -44,7 +42,17 @@ export function CustomerView() {
             key={index}
             className="flex items-center justify-between text-sm"
           >
-            <span>{item.name}</span>
+            <div className="flex items-center space-x-2">
+              <span>{item.name}</span>
+              {item.status && (
+                <Badge 
+                  variant="outline" 
+                  className={`text-xs ${item.status === "completed" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}`}
+                >
+                  {item.status}
+                </Badge>
+              )}
+            </div>
             <span className="font-medium">x{item.quantity}</span>
           </li>
         ))}

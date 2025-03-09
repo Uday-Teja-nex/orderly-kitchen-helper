@@ -16,12 +16,10 @@ import { useOrderStore, Order } from "@/utils/orderStore";
 import { useState } from "react";
 
 export function KitchenView() {
-  const { orders, updateOrder } = useOrderStore();
+  const { orders, updateOrder, updateOrderItem } = useOrderStore();
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
 
-  const activeOrders = orders.filter(
-    (order) => order.status === "pending" || order.status === "progress"
-  );
+  const activeOrders = orders.filter((order) => order.status === "progress");
   const completedOrders = orders.filter((order) => order.status === "completed");
 
   const handleQuantityChange = (itemIndex: number, newQuantity: string) => {
@@ -60,6 +58,15 @@ export function KitchenView() {
     });
     
     setEditingOrder(null);
+  };
+
+  const markItemStatus = (orderId: string, itemIndex: number, status: "progress" | "completed") => {
+    updateOrderItem(orderId, itemIndex, status);
+    
+    toast({
+      title: `Item ${status === "completed" ? "completed" : "in progress"}`,
+      description: `The item has been marked as ${status === "completed" ? "completed" : "in progress"}.`,
+    });
   };
 
   const OrderCard = ({ order }: { order: Order }) => (
@@ -135,27 +142,62 @@ export function KitchenView() {
             key={index}
             className="flex items-center justify-between text-sm"
           >
-            <span>{item.name}</span>
-            <span className="font-medium">x{item.quantity}</span>
+            <div className="flex items-center space-x-2">
+              <span>{item.name}</span>
+              <Badge 
+                variant="outline" 
+                className={`text-xs ${item.status === "completed" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}`}
+              >
+                {item.status || "progress"}
+              </Badge>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="font-medium">x{item.quantity}</span>
+              {order.status !== "completed" && (
+                <>
+                  {item.status !== "completed" ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 px-2 text-xs"
+                      onClick={() => markItemStatus(order.id, index, "completed")}
+                    >
+                      <Check className="mr-1 h-3 w-3" />
+                      Done
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 px-2 text-xs"
+                      onClick={() => markItemStatus(order.id, index, "progress")}
+                    >
+                      In Progress
+                    </Button>
+                  )}
+                </>
+              )}
+            </div>
           </li>
         ))}
       </ul>
       <div className="flex justify-end space-x-2">
-        {order.status === "pending" && (
+        {order.status !== "completed" && (
           <Button
             size="sm"
-            onClick={() => updateOrder(order.id, { status: "progress" })}
-          >
-            Start Preparing
-          </Button>
-        )}
-        {order.status === "progress" && (
-          <Button
-            size="sm"
-            onClick={() => updateOrder(order.id, { status: "completed" })}
+            onClick={() => {
+              const allItemsCompleted = order.items.map((item, index) => ({
+                ...item,
+                status: "completed"
+              }));
+              updateOrder(order.id, { 
+                status: "completed",
+                items: allItemsCompleted
+              });
+            }}
           >
             <Check className="mr-1 h-4 w-4" />
-            Mark Complete
+            Mark All Complete
           </Button>
         )}
       </div>
@@ -190,4 +232,3 @@ export function KitchenView() {
     </div>
   );
 }
-
