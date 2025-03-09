@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -49,11 +48,11 @@ export function NewOrderForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!customerName || selectedItems.length === 0) {
+    if (selectedItems.length === 0) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Please enter customer name and select items",
+        description: "Please select at least one item",
       });
       return;
     }
@@ -70,7 +69,7 @@ export function NewOrderForm() {
     }));
 
     addOrder({
-      customerName,
+      customerName: customerName || "Guest",
       items: orderItems,
       total,
     });
@@ -102,7 +101,7 @@ export function NewOrderForm() {
                 htmlFor="customerName"
                 className="block text-sm font-medium mb-2"
               >
-                Customer Name
+                Customer Name (optional)
               </label>
               <Input
                 id="customerName"
@@ -110,7 +109,6 @@ export function NewOrderForm() {
                 onChange={(e) => setCustomerName(e.target.value)}
                 placeholder="Enter customer name"
                 className="max-w-md"
-                required
               />
             </div>
             <div>
@@ -124,7 +122,7 @@ export function NewOrderForm() {
                     className="flex items-center justify-between p-3 text-sm border rounded-lg hover:bg-accent transition-colors"
                   >
                     <span>{item.name}</span>
-                    <Badge variant="secondary">${item.price}</Badge>
+                    <Badge variant="secondary">₹{item.price}</Badge>
                   </button>
                 ))}
               </div>
@@ -143,7 +141,7 @@ export function NewOrderForm() {
                 >
                   <span>{item.name}</span>
                   <div className="flex items-center space-x-3">
-                    <span>${item.price * item.quantity}</span>
+                    <span>₹{item.price * item.quantity}</span>
                     <div className="flex items-center space-x-2">
                       <Button
                         type="button"
@@ -180,7 +178,7 @@ export function NewOrderForm() {
               <div className="border-t pt-3 mt-3">
                 <div className="flex items-center justify-between font-medium">
                   <span>Total</span>
-                  <span>${total}</span>
+                  <span>₹{total}</span>
                 </div>
               </div>
             </div>
@@ -188,7 +186,7 @@ export function NewOrderForm() {
         )}
 
         <div className="flex justify-end">
-          <Button type="submit" disabled={!customerName || selectedItems.length === 0}>
+          <Button type="submit" disabled={selectedItems.length === 0}>
             Create Order
           </Button>
         </div>

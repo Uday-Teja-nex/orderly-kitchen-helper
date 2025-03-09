@@ -11,8 +11,9 @@ import { KitchenView } from "@/components/KitchenView";
 import { OrdersList } from "@/components/orders/OrdersList";
 import { NewOrderForm } from "@/components/NewOrderForm";
 import { MenuEditor } from "@/components/MenuEditor";
+import { CustomerView } from "@/components/CustomerView";
 import { Button } from "@/components/ui/button";
-import { Utensils, ClipboardList, PlusCircle, Menu } from "lucide-react";
+import { Utensils, ClipboardList, PlusCircle, Menu, Users } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Index() {
@@ -44,6 +45,14 @@ export default function Index() {
                 Kitchen
               </Button>
               <Button
+                variant={view === "customer" ? "secondary" : "ghost"}
+                className="w-full justify-start"
+                onClick={() => setView("customer")}
+              >
+                <Users className="mr-2 h-4 w-4" />
+                Customer View
+              </Button>
+              <Button
                 variant={view === "new" ? "secondary" : "ghost"}
                 className="w-full justify-start"
                 onClick={() => setView("new")}
@@ -72,6 +81,9 @@ export default function Index() {
               </TabsContent>
               <TabsContent value="kitchen" className="mt-0">
                 <KitchenView />
+              </TabsContent>
+              <TabsContent value="customer" className="mt-0">
+                <CustomerView />
               </TabsContent>
               <TabsContent value="new" className="mt-0">
                 <NewOrderForm />
